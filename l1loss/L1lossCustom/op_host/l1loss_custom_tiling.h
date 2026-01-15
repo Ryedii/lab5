@@ -16,8 +16,8 @@ BEGIN_TILING_DATA_DEF(TilingData)
 
 // TODO
 // user defined tiling parameters
-// TILING_DATA_FIELD_DEF(uint32_t, totalLength);
-// TILING_DATA_FIELD_DEF(uint32_t, tileNum);
+TILING_DATA_FIELD_DEF(uint32_t, totalLength);
+TILING_DATA_FIELD_DEF(uint32_t, tileNum);
 END_TILING_DATA_DEF;
 
 // Register the TilingData class

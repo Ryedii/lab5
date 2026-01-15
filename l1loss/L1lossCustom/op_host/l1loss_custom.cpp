@@ -22,8 +22,8 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
     context->SetBlockDim(BLOCK_DIM);
 
     // TODO set user-defined tiling parameters, all fields specified in l1loss_custom_tiling.h
-    // tiling.set_totalLength(totalLength);
-    // tiling.set_tileNum(TILE_NUM);
+    tiling.set_totalLength(totalLength);
+    tiling.set_tileNum(TILE_NUM);
 
     // store tiling datastructure
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
