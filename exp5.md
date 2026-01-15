@@ -1,3 +1,5 @@
+## 实验指导 exp5.pdf
+
 根据实验指导文件 **exp5.pdf**，本次实验（实验五）的主题是：
 
 > **AscendC 算子实现**
@@ -97,3 +99,35 @@
 - 建议以 **root 用户** 操作，避免权限问题。
 - 参考官方 AscendC 文档及 Gitee 上的 `add`、`matmul` 示例。
 - 所有算子均在 **香橙派 AI Pro（Ascend 310B）** 上运行。
+
+
+## L1Loss
+
+### 一、开发流程
+
+```bash
+# Enter workspace
+cd lab5/l1loss
+
+# Write op_host
+cd L1lossCustom/op_host
+...
+
+# Write op_kernel
+cd L1lossCustom/op_kernel
+
+# Something should not be written by user group or others, which will cause security risks
+chmod 600 L1lossCustom.json
+chmod 700 .
+
+# Build Operator
+msopgen gen -i L1lossCustom.json -c ai_core-Ascend310B1 -lan cpp -out CustomOp
+cp -rf L1lossCustom/* CustomOp
+bash CustomOp/build.sh  # expect: xxx/build_out/custom_opp_ubuntu_aarch64.run generated
+bash Custom/build_out/custom_opp_ubuntu_aarch64.run  # expect: Uncompressing version:1.0 100%
+
+# Test Operator
+bash AclNNInvocation/run.sh  # expect: test pass
+```
+
+二、
