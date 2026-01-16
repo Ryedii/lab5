@@ -106,13 +106,10 @@
 ### 一、开发流程
 
 ```bash
+su -
 cd l1loss
-
 bash install.sh
-
-(cd CustomOp/build_out && bash custom_opp_ubuntu_aarch64.run)  # expect: Uncompressing version:1.0 100%
-
-bash AclNNInvocation/run.sh  # expect: test pass
+bash test.sh
 ```
 
 二、
