@@ -41,10 +41,11 @@
          AscendC::Exp(expLocal, xLocal, this->tileLength);
 
          AscendC::LocalTensor<DTYPE_X> addLocal = addTmpBuffer.Get<DTYPE_X>();
-         AscendC::Adds(addLocal, expLocal, 1.0f, this->tileLength);
+         const DTYPE_X one = 1.0f;
+         AscendC::Adds(addLocal, expLocal, one, this->tileLength);
 
          AscendC::LocalTensor<DTYPE_Z> zLocal = outQueueZ.AllocTensor<DTYPE_Z>();
-         AscendC::Log(zLocal, addLocal, this->tileLength);
+         AscendC::Ln(zLocal, addLocal, this->tileLength);
      }
      __aicore__ inline void CopyOut(int32_t progress)
      {
