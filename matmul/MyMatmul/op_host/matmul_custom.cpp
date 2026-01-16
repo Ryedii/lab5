@@ -19,10 +19,14 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
     int32_t K = shape_a.GetDim(1);
 
     // set A,B,bias, result position, format, dtype 
-    // TODO
+    cubeTiling.SetAType(TPosition::GM, CubeFormat::ND, matmul_tiling::DataType::DT_FLOAT16);
+    cubeTiling.SetBType(TPosition::GM, CubeFormat::ND, matmul_tiling::DataType::DT_FLOAT16);
+    cubeTiling.SetCType(TPosition::GM, CubeFormat::ND, matmul_tiling::DataType::DT_FLOAT);
+    cubeTiling.SetBiasType(TPosition::GM, CubeFormat::ND, matmul_tiling::DataType::DT_FLOAT);
 
     // set shape
-    // TODO
+    cubeTiling.SetShape(M, N, K);
+    cubeTiling.SetOrgShape(M, N, K);
 
     // set split 
     int32_t baseM = 128;
@@ -30,10 +34,10 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
     cubeTiling.SetFixSplit(baseM, baseN, -1);
     
     //enable bias
-    // TODO
+    cubeTiling.SetBias(true);
 
     // set buffer space
-    // TODO
+    cubeTiling.SetBufferSpace(-1, -1, -1);
 
     // store tiling-info to tiling-dataStructure
     MatmulCustomTilingData tiling;
