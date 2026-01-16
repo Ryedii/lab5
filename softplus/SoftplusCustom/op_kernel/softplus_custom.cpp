@@ -15,7 +15,6 @@
          pipe.InitBuffer(inQueueX, BUFFER_NUM, this->tileLength * sizeof(DTYPE_X));
          pipe.InitBuffer(outQueueZ, BUFFER_NUM, this->tileLength * sizeof(DTYPE_Z));
          pipe.InitBuffer(expTmpBuffer, this->tileLength * sizeof(DTYPE_X));
-         pipe.InitBuffer(oneTmpBuffer, this->tileLength * sizeof(DTYPE_X));
          pipe.InitBuffer(addTmpBuffer, this->tileLength * sizeof(DTYPE_X));
      }
      __aicore__ inline void Process()
@@ -41,11 +40,8 @@
          AscendC::LocalTensor<DTYPE_X> expLocal = expTmpBuffer.Get<DTYPE_X>();
          AscendC::Exp(expLocal, xLocal, this->tileLength);
 
-         AscendC::LocalTensor<DTYPE_X> ondLocal = oneTmpBuffer.Get<DTYPE_X>();
-         AscendC::setValue(ondLocal, 1.0f, this->tileLength);
-
          AscendC::LocalTensor<DTYPE_X> addLocal = addTmpBuffer.Get<DTYPE_X>();
-         AscendC::Adds(addLocal, ondLocal, expLocal, this->tileLength);
+         AscendC::Adds(addLocal, expLocal, 1.0f, this->tileLength);
 
          AscendC::LocalTensor<DTYPE_Z> zLocal = outQueueZ.AllocTensor<DTYPE_Z>();
          AscendC::Log(zLocal, addLocal, this->tileLength);
@@ -62,7 +58,7 @@
      AscendC::TPipe pipe;
      AscendC::TQue<AscendC::TPosition::VECIN, BUFFER_NUM> inQueueX, inQueueY;
      AscendC::TQue<AscendC::TPosition::VECOUT, BUFFER_NUM> outQueueZ;
-     AscendC::TBuf<AscendC::QuePosition::VECCALC> expTmpBuffer, oneTmpBuffer, addTmpBuffer;
+     AscendC::TBuf<AscendC::QuePosition::VECCALC> expTmpBuffer, addTmpBuffer;
      AscendC::GlobalTensor<DTYPE_X> xGm;
      AscendC::GlobalTensor<DTYPE_Z> zGm;
      uint32_t blockLength;
