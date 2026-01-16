@@ -16,20 +16,12 @@ const uint32_t TILE_NUM = 8;
 static ge::graphStatus TilingFunc(gert::TilingContext *context)
 {
     TilingData tiling;
-    // get total length of input 
     uint32_t totalLength = context->GetInputShape(0)->GetOriginShape().GetShapeSize();
-
     context->SetBlockDim(BLOCK_DIM);
-
-    // TODO set user-defined tiling parameters, all fields specified in l1loss_custom_tiling.h
     tiling.set_totalLength(totalLength);
     tiling.set_tileNum(TILE_NUM);
-
-    // store tiling datastructure
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
-
-    // workspace settings
     size_t *currentWorkspace = context->GetWorkspaceSizes(1);
     currentWorkspace[0] = 0;
     return ge::GRAPH_SUCCESS;

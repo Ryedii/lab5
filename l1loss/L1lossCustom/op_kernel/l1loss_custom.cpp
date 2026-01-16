@@ -19,24 +19,17 @@ public:
         this->tileNum = tileNum;
         this->tileLength = this->blockLength / tileNum / BUFFER_NUM;
 
-        
-        // TODO set global buffer, write similar codes for y and z
         xGm.SetGlobalBuffer((__gm__ DTYPE_X *)x + this->blockLength * AscendC::GetBlockIdx(), this->blockLength);
         yGm.SetGlobalBuffer((__gm__ DTYPE_Y *)y + this->blockLength * AscendC::GetBlockIdx(), this->blockLength);
         zGm.SetGlobalBuffer((__gm__ DTYPE_Z *)z + this->blockLength * AscendC::GetBlockIdx(), this->blockLength);
-
-        // TODO init buffer 
         pipe.InitBuffer(inQueueX, BUFFER_NUM, this->tileLength * sizeof(DTYPE_X));
         pipe.InitBuffer(inQueueY, BUFFER_NUM, this->tileLength * sizeof(DTYPE_Y));
         pipe.InitBuffer(outQueueZ, BUFFER_NUM, this->tileLength * sizeof(DTYPE_Z));
     }
     __aicore__ inline void Process()
     {
-        // TODO
-        int32_t loopCount = this->tileNum * BUFFER_NUM;
-        
+        int32_t loopCount = this->tileNum * BUFFER_NUM;   
         for (int32_t i = 0; i < loopCount; i++) {
-            // TODO each loop do ???
             CopyIn(i);
             Compute(i);
             CopyOut(i);
@@ -46,35 +39,21 @@ public:
 private:
     __aicore__ inline void CopyIn(int32_t progress)
     {
-        // TODO alloc local tensors from inputQueue, give the codes for yLocal
         AscendC::LocalTensor<DTYPE_X> xLocal = inQueueX.AllocTensor<DTYPE_X>();
         AscendC::LocalTensor<DTYPE_Y> yLocal = inQueueY.AllocTensor<DTYPE_Y>();
-
-        // TODO copy from global memory to local tensor
         AscendC::DataCopy(xLocal, xGm[progress * this->tileLength], this->tileLength);
         AscendC::DataCopy(yLocal, yGm[progress * this->tileLength], this->tileLength);
-
-        // TODO enqueue local tensors to input-queue 
-        //      note: in AscendC, queue is used to sync between CopyIn/Compute/CopyOut
-        //      API like this
-        // inQueueX.EnQue(xLocal);
         inQueueX.EnQue(xLocal);
         inQueueY.EnQue(yLocal);
     }
     __aicore__ inline void Compute(int32_t progress)
     {
-        // TODO
-        // deque input tensors like this, alloc output tensor from output-queue
         AscendC::LocalTensor<DTYPE_X> xLocal = inQueueX.DeQue<DTYPE_X>();
         AscendC::LocalTensor<DTYPE_Y> yLocal = inQueueY.DeQue<DTYPE_Y>();
         AscendC::LocalTensor<DTYPE_Z> zLocal = outQueueZ.AllocTensor<DTYPE_Z>();
-
-        // TODO find related AscendC compute API to do L1loss operation
         AscendC::Sub(zLocal, xLocal, yLocal, this->tileLength);
         AscendC::Abs(zLocal, zLocal, this->tileLength);
-
-        // TODO enqueue output tensor, free input tensors
-        outQueueZ.EnQue(zLocal);
+        outQueueZ.EnQue<DTYPE_Z>(zLocal);
         inQueueX.FreeTensor(xLocal);
         inQueueY.FreeTensor(yLocal);
     }
@@ -100,18 +79,15 @@ private:
 
 extern "C" __global__ __aicore__ void l1loss_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tiling_data, tiling);
-    // create Kernel, call init and process methods
     KernelL1loss op;
     op.Init(x, y, z, tiling_data.totalLength, tiling_data.tileNum);
     op.Process();
 }
 
-// this api is used for CPU debugging, 
 #ifndef ASCENDC_CPU_DEBUG
 // call of kernel function
 void l1loss_custom_do(uint32_t blockDim, void *l2ctrl, void *stream, uint8_t *x, uint8_t *y, uint8_t *z,
-                   uint8_t *workspace, uint8_t *tiling)
-{
+                   uint8_t *workspace, uint8_t *tiling) {
     l1loss_custom<<<blockDim, l2ctrl, stream>>>(x, y, z, workspace, tiling);
 }
 #endif

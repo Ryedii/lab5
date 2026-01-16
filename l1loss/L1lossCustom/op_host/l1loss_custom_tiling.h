@@ -13,14 +13,10 @@
 
 namespace optiling {
 BEGIN_TILING_DATA_DEF(TilingData)
-
-// TODO
-// user defined tiling parameters
 TILING_DATA_FIELD_DEF(uint32_t, totalLength);
 TILING_DATA_FIELD_DEF(uint32_t, tileNum);
 END_TILING_DATA_DEF;
 
-// Register the TilingData class
 REGISTER_TILING_DATA_CLASS(L1lossCustom, TilingData)
 } // namespace optiling
 #endif // L1LOSS_CUSTOM_TILING_H
