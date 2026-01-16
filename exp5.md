@@ -107,26 +107,35 @@
 
 ```bash
 # Enter workspace
-cd lab5/l1loss
+workspace="/home/HwHiAiUser/wangty/lab5/l1loss"
 
 # Write op_host
-cd L1lossCustom/op_host
+cd $workspace/L1lossCustom/op_host
 ...
 
 # Write op_kernel
-cd L1lossCustom/op_kernel
+cd $workspace/L1lossCustom/op_kernel
+...
 
 # Something should not be written by user group or others, which will cause security risks
+cd $workspace
 chmod 600 L1lossCustom.json
 chmod 700 .
 
 # Build Operator
+cd $workspace
 msopgen gen -i L1lossCustom.json -c ai_core-Ascend310B1 -lan cpp -out CustomOp
 cp -rf L1lossCustom/* CustomOp
-bash CustomOp/build.sh  # expect: xxx/build_out/custom_opp_ubuntu_aarch64.run generated
-bash Custom/build_out/custom_opp_ubuntu_aarch64.run  # expect: Uncompressing version:1.0 100%
+
+cd $workspace/CustomOp
+export ASCEND_CUSTOM_OPP_PATH=$HOME/my_opp
+bash build.sh  # expect: xxx/build_out/custom_opp_ubuntu_aarch64.run generated
+
+cd $workspace/CustomOp/build_out
+bash custom_opp_ubuntu_aarch64.run  # expect: Uncompressing version:1.0 100%
 
 # Test Operator
+cd $workspace
 bash AclNNInvocation/run.sh  # expect: test pass
 ```
 
