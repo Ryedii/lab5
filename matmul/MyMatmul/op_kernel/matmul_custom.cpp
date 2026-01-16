@@ -80,9 +80,5 @@ extern "C" __global__ __aicore__ void matmul_custom(GM_ADDR a, GM_ADDR b, GM_ADD
     AscendC::TPipe pipe;
     REGIST_MATMUL_OBJ(&pipe, GetSysWorkSpacePtr(), matmulKernel.matmulObj, &tilingData.cubeTilingData);
     matmulKernel.Init(a, b, bias, c, workspace, tilingData.cubeTilingData);
-    if (TILING_KEY_IS(1)) {
-        matmulKernel.Process(&pipe);
-    } else if (TILING_KEY_IS(2)) {
-        matmulKernel.Process<true>(&pipe);
-    }
+    matmulKernel.Process(&pipe);
 }
