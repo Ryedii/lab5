@@ -106,34 +106,12 @@
 ### 一、开发流程
 
 ```bash
-# Enter workspace
-workspace="/home/HwHiAiUser/wangty/lab5/l1loss"
+cd l1loss
 
-# Write op_host
-cd $workspace/L1lossCustom/op_host
+bash install.sh
 
-# Write op_kernel
-cd $workspace/L1lossCustom/op_kernel
+(cd CustomOp/build_out && bash custom_opp_ubuntu_aarch64.run)  # expect: Uncompressing version:1.0 100%
 
-# Something should not be written by user group or others, which will cause security risks
-cd $workspace
-chmod 600 L1lossCustom.json
-chmod 700 .
-
-# Build Operator
-cd $workspace
-msopgen gen -i L1lossCustom.json -c ai_core-Ascend310B1 -lan cpp -out CustomOp
-cp -rf L1lossCustom/* CustomOp
-
-cd $workspace/CustomOp
-export ASCEND_CUSTOM_OPP_PATH=$HOME/my_opp
-bash build.sh  # expect: xxx/build_out/custom_opp_ubuntu_aarch64.run generated
-
-cd $workspace/CustomOp/build_out
-bash custom_opp_ubuntu_aarch64.run  # expect: Uncompressing version:1.0 100%
-
-# Test Operator
-cd $workspace
 bash AclNNInvocation/run.sh  # expect: test pass
 ```
 
