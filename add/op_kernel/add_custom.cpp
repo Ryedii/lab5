@@ -77,6 +77,7 @@
  
  extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)
  {
+     std::cout << "------------------------------" << #GET_TILING_DATA << "------------------------------" << std::endl;
      GET_TILING_DATA(tiling_data, tiling);
      KernelAdd op;
      op.Init(x, y, z, tiling_data.totalLength, tiling_data.tileNum);
