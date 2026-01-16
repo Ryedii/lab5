@@ -46,6 +46,9 @@
 
          AscendC::LocalTensor<DTYPE_Z> zLocal = outQueueZ.AllocTensor<DTYPE_Z>();
          AscendC::Ln(zLocal, addLocal, this->tileLength);
+
+         outQueueZ.EnQue<float>(zLocal);
+         inQueueX.FreeTensor(xLocal);
      }
      __aicore__ inline void CopyOut(int32_t progress)
      {
