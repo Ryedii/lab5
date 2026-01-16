@@ -22,8 +22,8 @@ export NPU_HOST_LIB=$_ASCEND_INSTALL_PATH/$(arch)-$(uname -s | tr '[:upper:]' '[
 function main {
     # 1. 清除遗留生成文件和日志文件
     rm -rf $HOME/ascend/log/*
-    rm ./input/*.bin
-    rm ./output/*.bin
+    rm -f ./input/*.bin
+    rm -f ./output/*.bin
 
     # 2. 生成输入数据和真值数据
     cd $CURRENT_DIR
