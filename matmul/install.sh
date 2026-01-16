@@ -1,5 +1,5 @@
 workspace="/home/HwHiAiUser/wangty/lab5/matmul"
-OP_NAME=L1lossCustom
+OP_NAME=MatmulCustom
 
 # Write op_host and op_kernel
 cd $workspace/$OP_NAME/op_host
