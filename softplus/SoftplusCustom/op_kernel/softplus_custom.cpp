@@ -45,7 +45,7 @@
          AscendC::setValue(ondLocal, 1.0f, this->tileLength);
 
          AscendC::LocalTensor<DTYPE_X> addLocal = addTmpBuffer.Get<DTYPE_X>();
-         AscendC::Add(addLocal, ondLocal, expLocal, this->tileLength);
+         AscendC::Adds(addLocal, ondLocal, expLocal, this->tileLength);
 
          AscendC::LocalTensor<DTYPE_Z> zLocal = outQueueZ.AllocTensor<DTYPE_Z>();
          AscendC::Log(zLocal, addLocal, this->tileLength);
