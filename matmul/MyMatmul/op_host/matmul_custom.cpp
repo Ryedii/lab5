@@ -9,48 +9,33 @@ namespace optiling {
 static ge::graphStatus TilingFunc(gert::TilingContext *context)
 {
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
-    MatmulApiTiling cubeTiling(ascendcPlatform);
 
-    // extract shape from context
     auto shape_a = context->GetInputTensor(0)->GetOriginShape();
     auto shape_b = context->GetInputTensor(1)->GetOriginShape();
     int32_t M = shape_a.GetDim(0);
     int32_t N = shape_b.GetDim(1);
     int32_t K = shape_a.GetDim(1);
-
-    // set A,B,bias, result position, format, dtype 
+    int32_t baseM = 128;
+    int32_t baseN = 128;
+    MatmulApiTiling cubeTiling(ascendcPlatform);
     cubeTiling.SetAType(TPosition::GM, CubeFormat::ND, matmul_tiling::DataType::DT_FLOAT16);
     cubeTiling.SetBType(TPosition::GM, CubeFormat::ND, matmul_tiling::DataType::DT_FLOAT16);
     cubeTiling.SetCType(TPosition::GM, CubeFormat::ND, matmul_tiling::DataType::DT_FLOAT);
     cubeTiling.SetBiasType(TPosition::GM, CubeFormat::ND, matmul_tiling::DataType::DT_FLOAT);
-
-    // set shape
     cubeTiling.SetShape(M, N, K);
     cubeTiling.SetOrgShape(M, N, K);
-
-    // set split 
-    int32_t baseM = 128;
-    int32_t baseN = 128;
     cubeTiling.SetFixSplit(baseM, baseN, -1);
-    
-    //enable bias
     cubeTiling.SetBias(true);
-
-    // set buffer space
     cubeTiling.SetBufferSpace(-1, -1, -1);
-
-    // store tiling-info to tiling-dataStructure
     MatmulCustomTilingData tiling;
-    if (cubeTiling.GetTiling(tiling.cubeTilingData) == -1) { // Get matmul tiling.
+    if (cubeTiling.GetTiling(tiling.cubeTilingData) == -1) {
         return ge::GRAPH_FAILED;
     }
 
-    // only one block used
+    context->SetTilingKey(1);
     context->SetBlockDim(1);
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
-    
-    // workspace settings
     size_t userWorkspaceSize = 0;
     size_t systemWorkspaceSize = static_cast<size_t>(ascendcPlatform.GetLibApiWorkSpaceSize());
     size_t *currentWorkspace = context->GetWorkspaceSizes(1);
