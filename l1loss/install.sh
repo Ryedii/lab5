@@ -20,3 +20,4 @@ msopgen gen -i $OP_NAME.json -c ai_core-Ascend310B1 -lan cpp -out CustomOp
 cp -rf $OP_NAME/* CustomOp
 # Build CustomOp project
 (cd CustomOp && bash build.sh)  # expect: xxx/build_out/custom_opp_ubuntu_aarch64.run generated
+(cd CustomOp/build_out && bash custom_opp_ubuntu_aarch64.run)
