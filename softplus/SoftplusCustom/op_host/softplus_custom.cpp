@@ -37,9 +37,9 @@
  } // namespace ge
  
  namespace ops {
- class L1lossCustom : public OpDef {
+ class SoftplusCustom : public OpDef {
  public:
-     explicit L1lossCustom(const char *name) : OpDef(name)
+     explicit SoftplusCustom(const char *name) : OpDef(name)
      {
          this->Input("x")
              .ParamType(REQUIRED)
@@ -56,6 +56,6 @@
              .AddConfig("ascend310b");
      }
  };
- OP_ADD(L1lossCustom);
+ OP_ADD(SoftplusCustom);
  } // namespace ops
  

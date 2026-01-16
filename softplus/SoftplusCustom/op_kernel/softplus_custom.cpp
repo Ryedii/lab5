@@ -70,17 +70,17 @@
      uint32_t tileLength;
  };
  
- extern "C" __global__ __aicore__ void l1loss_custom(GM_ADDR x, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling) {
+ extern "C" __global__ __aicore__ void softplus_custom(GM_ADDR x, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling) {
      GET_TILING_DATA(tiling_data, tiling);
-     KernelL1loss op;
+     KernelSoftplus op;
      op.Init(x, z, tiling_data.totalLength, tiling_data.tileNum);
      op.Process();
  }
  
  #ifndef ASCENDC_CPU_DEBUG
  // call of kernel function
- void l1loss_custom_do(uint32_t blockDim, void *l2ctrl, void *stream, uint8_t *x, uint8_t *z,
+ void softplus_custom_do(uint32_t blockDim, void *l2ctrl, void *stream, uint8_t *x, uint8_t *z,
                     uint8_t *workspace, uint8_t *tiling) {
-     l1loss_custom<<<blockDim, l2ctrl, stream>>>(x, z, workspace, tiling);
+     softplus_custom<<<blockDim, l2ctrl, stream>>>(x, z, workspace, tiling);
  }
  #endif
