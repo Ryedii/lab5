@@ -111,11 +111,9 @@ workspace="/home/HwHiAiUser/wangty/lab5/l1loss"
 
 # Write op_host
 cd $workspace/L1lossCustom/op_host
-...
 
 # Write op_kernel
 cd $workspace/L1lossCustom/op_kernel
-...
 
 # Something should not be written by user group or others, which will cause security risks
 cd $workspace
